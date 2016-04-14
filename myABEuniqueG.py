@@ -157,29 +157,24 @@ class myABE(SchemeBase):
         policy = util.createPolicy(ct['policy']) #[((ONE or THREE) and (TWO or FOUR))
         pruned = util.prune(policy, S) #[ONE, TWO]
         wi = util.getCoefficients(policy) #{u'TWO': <pairing.Element>, u'FOUR': <pairing.Element>, u'THREE': <pairing.Element>, u'ONE': <pairing.Element>}
-        # Part 1 of IM formula
+
         eC0K0 = pair(C0,K0)
         ECi4wi = 0
         for each in pruned:
             j = each.getAttributeAndIndex()
             i = each.getAttribute()
-            ECi4wi += Ci4[i]*wi[i]
+            ECi4wi += Ci4[i] * wi[i]
         ewECi4wiK1 = pair(w ** ECi4wi,K1)
-        PIeCi1K1wi = 1
+        PIeCi1K1eCi2uCi5Kj2eCi3Kj3wi = 1
         for each in pruned:
             j = each.getAttributeAndIndex()
             i = each.getAttribute()
-            PIeCi1K1wi *= (pair(Ci1[i],K1))**wi[i]
-        Part1 = eC0K0/(ewECi4wiK1 * PIeCi1K1wi)
-        # Part 2 of IM formula
-        PIeCi2uCi5Kj2eCi3Kj3wi = 1
-        for each in pruned:
-            j = each.getAttributeAndIndex()
-            i = each.getAttribute()
-            PIeCi2uCi5Kj2eCi3Kj3wi *= (pair(Ci2[i]*(u**Ci5[i]),Kj2[j]) * pair(Ci3[i],Kj3[j]))**wi[i]
-        Part2 = 1/PIeCi2uCi5Kj2eCi3Kj3wi
+            eCi1K1 = pair(Ci1[i],K1)
+            eCi2uCi5Kj2 = pair(Ci2[i] * (u ** -Ci5[i]), Kj2[j])
+            eCi3Kj3 = pair(Ci3[i],Kj3[j])
+            PIeCi1K1eCi2uCi5Kj2eCi3Kj3wi *= (eCi1K1 * eCi2uCi5Kj2 * eCi3Kj3) ** wi[i]
 
-        return Part1*Part2
+        return eC0K0/(ewECi4wiK1 * PIeCi1K1eCi2uCi5Kj2eCi3Kj3wi)
 
     def decrypt(self, sk, im):
         print('#Excepted egg^as/z =',self.verify['eggas']**(1/sk))
